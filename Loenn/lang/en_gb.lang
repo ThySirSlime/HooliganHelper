@@ -1,0 +1,41 @@
+mods.HooliganHelper.name=Hooligan Helper
+
+# --- Confetti Trigger
+
+triggers.HooliganHelper/ConfettiTriggerIfItLockedTFIn.placements.name.confetti_trigger_if_it_locked_the_fuck_in=Confetti Trigger if it Locked the Fuck In
+triggers.HooliganHelper/ConfettiTriggerIfItLockedTFIn.placements.description.confetti_trigger_if_it_locked_the_fuck_in=Confettis at player position and sets a state!
+
+triggers.HooliganHelper/ConfettiTriggerIfItLockedTFIn.attributes.description.eventName=The audio event to play. Use event:/HooliganHelper/KidsCheering for the optimal experience.
+triggers.HooliganHelper/ConfettiTriggerIfItLockedTFIn.attributes.description.confettiState=The state to set the player to.
+
+# --- Stamina Trigger
+
+triggers.HooliganHelper/StaminaSetTriggerForRemixAndNothingElse.placements.name.stamina_set_trigger=Stamina Set Trigger
+triggers.HooliganHelper/StaminaSetTriggerForRemixAndNothingElse.placements.description.stamina_set_trigger=Sets Player Stamina (The Name Is A Joke You Can Use It)
+
+triggers.HooliganHelper/StaminaSetTriggerForRemixAndNothingElse.attributes.description.staminaValue=Stamina Value.
+
+# --- Metamorphosis Refill
+
+entities.HooliganHelper/RandomStateRefill.placements.name.random_state_refill=Metamorphosis Refill
+entities.HooliganHelper/RandomStateRefill.placements.description.random_state_refill=Randomly activates one of four states on dash end: 5, 9, 14, 19.
+
+# --- Bumper Refill
+
+entities.HooliganHelper/BumperRefill.placements.name.bumper_refill=Bumper Refill
+entities.HooliganHelper/BumperRefill.placements.description.bumper_refill=Bumpers you in direction held at the end of your dash. Compatable with Core Mode!
+entities.HooliganHelper/BumperRefill.attributes.description.delayTime=How long to wait after the end of your dash. 
+entities.HooliganHelper/BumperRefill.attributes.description.bumperDoesntRefillDash=Whether to avoid refilling dash when bumped. Ensure all refills in a specific room are the same setting.
+
+# --- Daisy Refill
+
+entities.HooliganHelper/DaisyRefill.placements.name.daisy_refill=Daisy Refill
+entities.HooliganHelper/DaisyRefill.placements.description.daisy_refill=Generates a string of spinners behind your dash.
+entities.HooliganHelper/DaisyRefill.attributes.description.refillSprite=Defaults to "objects/HooliganHelper/DaisyRefill/daisyrefill"
+entities.HooliganHelper/DaisyRefill.attributes.description.outlineSprite=Defaults to "objects/HooliganHelper/DaisyRefill/outline"
+entities.HooliganHelper/DaisyRefill.attributes.description.spinnerSprite=Defaults to "objects/HooliganHelper/DaisyRefill/daisyspinner"
+
+# --- Bough Refill
+
+entities.HooliganHelper/BoughRefill.placements.name.bough_refill=Bough Refill (State 13, IntroJump)
+entities.HooliganHelper/BoughRefill.placements.description.bough_refill=Does weird stuff. Best interrupted by a state 0.

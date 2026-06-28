@@ -1,0 +1,22 @@
+HooliganHelperIntroa=
+[MADELINE left normal]
+Introducing Hooligan Helper!
+This helper currently contains 2 very cool refills, and an unusable one!
+First up is the Bumper Refill! Dashing activates the bumper effect at the end of your dash.
+
+HooliganHelperIntrob=
+[MADELINE left normal]
+And yes! The Bumper Refill allows you to redirect it!
+
+HooliganHelperIntroc=
+[MADELINE left normal]
+Next is the Daisy Refill!
+Dash to leave a trail of pretty flowers behind you!
+
+HooliganHelperIntrod=
+[MADELINE left normal]
+Yes, it works with tech too!
+
+HooliganHelperIntroe=
+[MADELINE right distracted]
+I wonder what the pretty flowers do...
