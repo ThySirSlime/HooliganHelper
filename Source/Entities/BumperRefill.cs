@@ -224,7 +224,7 @@ public class BumperRefill : Entity
             Audio.Play("event:/game/06_reflection/pinballbumper_hit", player.Position);
         }
         
-        SceneAs<Level>().Particles.Emit(Bumper.P_Launch, 12, player.Center - dir * 3f, Vector2.One * 3f, dir.Angle());
+        SceneAs<Level>()?.Particles.Emit(Bumper.P_Launch, 12, player.Center - dir * 3f, Vector2.One * 3f, dir.Angle());
         ShouldSkipDashRefill = false;
     }
     
@@ -234,15 +234,6 @@ public class BumperRefill : Entity
         
         if (Scene is not Level level) return;
 
-        if (HooliganHelperModule.Session.LastBumperCollected ==  this)
-        {
-            AddTag(Tags.Global);
-        }
-        else
-        {
-            RemoveTag(Tags.Global);
-        }
-        
         if (respawnTimer > 0f)
         {
             respawnTimer -= Engine.DeltaTime;
