@@ -36,7 +36,17 @@ public class HooliganHelperModule : EverestModule {
         On.Celeste.Player.DashBegin += PlayerOnDashBegin;
         On.Celeste.Player.Die += PlayerDiedLmao;
         On.Celeste.Level.End += LevelOnEnd;
+        On.Celeste.Player.Added += PlayerRespawns;
         IL.Celeste.Player.ExplodeLaunch_Vector2_bool_bool += PlayerOnExplodeLaunch_Vector2_bool_bool;
+    }
+
+    private static void PlayerRespawns(On.Celeste.Player.orig_Added orig, Player self, Scene scene)
+    {
+        Session.MetamorphosisDashes = 0;
+        Session.BumperDashes = 0;
+        Session.DaisyDashes = 0;
+        Session.BoughDashes = 0;
+        orig(self,scene);
     }
 
     private static void LevelOnEnd(On.Celeste.Level.orig_End orig, Level self)
@@ -132,6 +142,7 @@ public class HooliganHelperModule : EverestModule {
         On.Celeste.Player.DashBegin -= PlayerOnDashBegin;
         On.Celeste.Player.Die -= PlayerDiedLmao;
         On.Celeste.Level.End -= LevelOnEnd;
+        On.Celeste.Player.Added -= PlayerRespawns;
         IL.Celeste.Player.ExplodeLaunch_Vector2_bool_bool -= PlayerOnExplodeLaunch_Vector2_bool_bool;
     }
 }
