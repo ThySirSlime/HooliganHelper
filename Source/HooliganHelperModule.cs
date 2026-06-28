@@ -19,6 +19,7 @@ public class HooliganHelperModule : EverestModule {
     public override Type SaveDataType => typeof(HooliganHelperModuleSaveData);
     public static HooliganHelperModuleSaveData SaveData => (HooliganHelperModuleSaveData) Instance._SaveData;
 
+    
     public HooliganHelperModule() {
         Instance = this;
 #if DEBUG
