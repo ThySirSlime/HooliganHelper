@@ -1,73 +1,46 @@
-﻿using System;
-using System.Collections;
-using Celeste.Mod.Entities;
-using Microsoft.Xna.Framework;
-using Monocle;
-
-namespace Celeste.Mod.HooliganHelper.Entities;
-
+﻿namespace Celeste.Mod.HooliganHelper.Entities;
 [CustomEntity("HooliganHelper/RandomStateRefill")]
+
 public class RandomStateRefill : Entity
 {
     private static readonly int[] MStates = [5, 9, 14, 19];
 
-    public static ParticleType P_MetamorphosisShatter = new ParticleType(Refill.P_Shatter)
+    private static readonly ParticleType P_MetamorphosisShatter = new ParticleType(Refill.P_Shatter)
     {
         Color = Calc.HexToColor("ffffff"),
         Color2 = Calc.HexToColor("dddddd"),
     };
 
-    public static ParticleType P_MetamorphosisRegen = new ParticleType(Refill.P_Regen)
+    private static readonly ParticleType P_MetamorphosisRegen = new ParticleType(Refill.P_Regen)
     {
         SpeedMin = 40f,
         SpeedMax = 60f,
         Color = Calc.HexToColor("70cdff"),
         Color2 = Calc.HexToColor("ff66b6")
     };
-    
-    public static ParticleType P_MetamorphosisGlow = new ParticleType(Refill.P_Glow)
+
+    private static readonly ParticleType P_MetamorphosisGlow = new ParticleType(Refill.P_Glow)
     {
         Color = Calc.HexToColor("70cdff"),
         Color2 = Calc.HexToColor("ff66b6")
     };
     
-    private Sprite Sprite;
-    
-    private Sprite PSprite;
-
+    private readonly Sprite Sprite;
+    private readonly Sprite PSprite;
     private Level level;
-    
-    private Image Outline;
-    
-    private Wiggler wiggler;
-
-    private BloomPoint bloom;
-
-    private VertexLight light;
-
-    private SineWave sine;
-    
-    private bool oneUse;
-    
-    public static int state;
-    
+    private readonly Image Outline;
+    private readonly Wiggler wiggler;
+    private readonly BloomPoint bloom;
+    private readonly VertexLight light;
+    private readonly SineWave sine;
+    private readonly bool oneUse;
+    private static int state;
     private float respawnTimer;
-
-    private static int MetamorphosisDashes
-    {
-        get => HooliganHelperModule.Session.MetamorphosisDashes; 
-        set => HooliganHelperModule.Session.MetamorphosisDashes = value;
-    }
-    private static bool DashingWithMetamorphosis
-    {
-        get => HooliganHelperModule.Session.DashingWithMetamorphosis; 
-        set => HooliganHelperModule.Session.DashingWithMetamorphosis = value;
-    }
     
     public RandomStateRefill(EntityData data, Vector2 offset)
     :base(data.Position + offset)
     {
-        base.Collider = new Hitbox(16f, 16f, -8f, -8f);
+        Collider = new Hitbox(16f, 16f, -8f, -8f);
         Add(new PlayerCollider(OnPlayer));
         
         oneUse = data.Bool("oneUse", defaultValue:false);
@@ -88,7 +61,7 @@ public class RandomStateRefill : Entity
         PSprite.Add("feather", "absorb_feather", .066f);
         PSprite.CenterOrigin();
         
-        Add(wiggler = Wiggler.Create(1f, 4f, (float v) =>
+        Add(wiggler = Wiggler.Create(1f, 4f, (v) =>
         {
            Sprite.Scale = (Sprite.Scale = Vector2.One * (1f + v * 0.2f));
         }));
@@ -98,9 +71,8 @@ public class RandomStateRefill : Entity
         Add(sine = new SineWave(0.6f, 0f));
         sine.Randomize();
         UpdateY();
-        base.Depth = -100;
+        Depth = -100;
     }
-    
 
     private void UpdateY()
     {
@@ -115,6 +87,7 @@ public class RandomStateRefill : Entity
         base.Added(scene);
         level = scene as Level;
     }
+    
     private void OnPlayer(Player player)
     {
         state=Calc.Random.Choose(MStates);
@@ -122,29 +95,29 @@ public class RandomStateRefill : Entity
         if (state == 5)
         {
             Audio.Play("event:/game/05_mirror_temple/redbooster_enter", Position);
-            PSprite.Play("redbooster", true, false);
+            PSprite.Play("redbooster", true);
         }
-        if (state == 9)
+        else if (state == 9)
         {
             Audio.Play("event:/char/madeline/dreamblock_enter", Position);
-            PSprite.Play("dreamblock", true, false);
+            PSprite.Play("dreamblock", true);
         }
-        if (state == 14)
+        else if (state == 14)
         {
             Audio.Play("event:/game/04_cliffside/snowball_impact", Position);
-            PSprite.Play("respawn", true, false);
+            PSprite.Play("respawn", true);
         }
-        if (state == 19)
+        else if (state == 19)
         {
             Audio.Play("event:/game/06_reflection/feather_renew", Position);
-            PSprite.Play("feather", true, false);
+            PSprite.Play("feather", true);
         }
+
         Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
         Collidable = false;
         Add(new Coroutine(RefillRoutine(player)));
         respawnTimer = 2.5f;
     }
-    
     
     public override void Update()
     {
@@ -157,7 +130,7 @@ public class RandomStateRefill : Entity
                 Respawn();
             }
         }
-        else if (base.Scene.OnInterval(0.1f))
+        else if (Scene.OnInterval(0.1f))
         {
             level.ParticlesFG.Emit(P_MetamorphosisGlow, 1, Position, Vector2.One * 5f);
         }
@@ -172,17 +145,18 @@ public class RandomStateRefill : Entity
         // }
 
     }
+    
     private IEnumerator RefillRoutine(Player player)
     {
-        MetamorphosisDashes++;
-        global::Celeste.Celeste.Freeze(0.05f);
+        HooliganHelperModule.Session.MetamorphosisDashes++;
+        Celeste.Freeze(0.05f);
         yield return null;
         level.Shake();
         Sprite.Visible = false;
         Outline.Visible = true;
-        if (!oneUse)
+        if (oneUse)
         {
-            Outline.Visible = true;
+            Outline.Visible = false;
         }
         Depth = 8999;
         yield return 0.05f;
@@ -200,6 +174,7 @@ public class RandomStateRefill : Entity
     {
         player.StateMachine.State = state;
     }
+    
     private void Respawn()
     {
         if (!Collidable)
@@ -207,12 +182,13 @@ public class RandomStateRefill : Entity
             Collidable = true;
             Sprite.Visible = true;
             Outline.Visible = false;
-            base.Depth = -100;
+            Depth = -100;
             wiggler.Start();
             Audio.Play("event:/new_content/game/10_farewell/pinkdiamond_return", Position);
             level.ParticlesFG.Emit(P_MetamorphosisRegen, 16, Position, Vector2.One * 2f);
         }
     }
+    
     public override void Render()
     {
         if (Sprite.Visible)
@@ -221,5 +197,4 @@ public class RandomStateRefill : Entity
         }
         base.Render();
     }
-
 }
