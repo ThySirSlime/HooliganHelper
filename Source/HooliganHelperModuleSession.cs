@@ -4,15 +4,24 @@ namespace Celeste.Mod.HooliganHelper;
 
 public class HooliganHelperModuleSession : EverestModuleSession
 {
-    public int BumperDashes;
-    public bool DashingWithBumper;
-    public BumperRefill LastBumperCollected;
-    public int BoughDashes;
-    public bool DashingWithBough; 
-    public int MetamorphosisDashes;
-    public bool DashingWithMetamorphosis;
-    public int DaisyDashes;
-    public bool DashingWithDaisy;
-    public int KnifeDashes;
-    public bool DashingWithKnife;
+    //Bumper Refill
+    public int BumperDashes {get; set;}
+    public bool DashingWithBumper {get; set;}
+    public BumperRefill LastBumperCollected {get; set;}
+    
+    //Bough Refill
+    public int BoughDashes {get; set;}
+    public bool DashingWithBough {get; set;}
+    
+    //Metamorphosis Refill
+    public int MetamorphosisDashes {get; set;}
+    public bool DashingWithMetamorphosis {get; set;}
+    
+    //Daisy Refill
+    public int DaisyDashes {get; set;}
+    public bool DashingWithDaisy {get; set;}
+    
+    //Knife Refill
+    public int KnifeDashes {get; set;}
+    public bool DashingWithKnife {get; set;}
 }

@@ -1,15 +1,10 @@
-﻿using Celeste.Mod.Entities;
-using Celeste.Pico8;
-using Microsoft.Xna.Framework;
-
-namespace Celeste.Mod.HooliganHelper.Triggers;
-
-// ReSharper disable once InconsistentNaming
+﻿namespace Celeste.Mod.HooliganHelper.Triggers;
 [CustomEntity("HooliganHelper/ConfettiTriggerIfItLockedTFIn")]
+
 public class ConfettiTriggerIfItLockedTFIn : Trigger
 {
-    private string EventName;
-    private int ConfettiState; 
+    private readonly string EventName;
+    private readonly int ConfettiState; 
 
     public ConfettiTriggerIfItLockedTFIn(EntityData data, Vector2 offset)
         : base(data, offset)
@@ -21,10 +16,9 @@ public class ConfettiTriggerIfItLockedTFIn : Trigger
     public override void OnEnter(Player player)
     {
         base.OnEnter(player);
+        Level level = Scene as Level;
         
-        Level level = base.Scene as Level;
-        
-        level.Add(new SummitCheckpoint.ConfettiRenderer(player.Position));
+        level?.Add(new SummitCheckpoint.ConfettiRenderer(player.Position));
         Audio.Play(EventName, player.Position);
         player.StateMachine.State = ConfettiState;
     }

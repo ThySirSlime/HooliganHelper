@@ -1,23 +1,16 @@
-﻿using System;
-using System.Collections;
-using Celeste.Mod.Entities;
-using Microsoft.Xna.Framework;
-using Monocle;
-
-namespace Celeste.Mod.HooliganHelper.Entities;
-
+﻿namespace Celeste.Mod.HooliganHelper.Entities;
+[CustomEntity("HooliganHelper/BumperRefill")]
 [Tracked]
 
-[CustomEntity("HooliganHelper/BumperRefill")]
 public class BumperRefill : Entity
 {
-    public static ParticleType P_BumperShatter = new ParticleType(Refill.P_Shatter)
+    private static readonly ParticleType P_BumperShatter = new ParticleType(Refill.P_Shatter)
     {
         Color = Calc.HexToColor("ffffff"),
         Color2 = Calc.HexToColor("dddddd"),
     };
 
-    public static ParticleType P_BumperRegen = new ParticleType(Refill.P_Regen)
+    private static readonly ParticleType P_BumperRegen = new ParticleType(Refill.P_Regen)
     {
         SpeedMin = 40f,
         SpeedMax = 60f,
@@ -25,15 +18,15 @@ public class BumperRefill : Entity
         Color = Calc.HexToColor("47b5cc"),
         Color2 = Calc.HexToColor("c4f4ff")
     };
-    
-    public static ParticleType P_BumperGlow = new ParticleType(Refill.P_Glow)
+
+    private static readonly ParticleType P_BumperGlow = new ParticleType(Refill.P_Glow)
     {
         ColorMode = ParticleType.ColorModes.Blink,
         Color = Calc.HexToColor("47b5cc"),
         Color2 = Calc.HexToColor("c4f4ff")
     };
 
-    public static ParticleType P_EvilBumperRegen = new ParticleType(Refill.P_Regen)
+    private static readonly ParticleType P_EvilBumperRegen = new ParticleType(Refill.P_Regen)
     {
         SpeedMin = 40f,
         SpeedMax = 60f,
@@ -41,56 +34,29 @@ public class BumperRefill : Entity
         Color = Calc.HexToColor("ff350f"),
         Color2 = Calc.HexToColor("c21f11")
     };
-    
-    public static ParticleType P_EvilBumperGlow = new ParticleType(Refill.P_Glow)
+
+    private static readonly ParticleType P_EvilBumperGlow = new ParticleType(Refill.P_Glow)
     {
         ColorMode = ParticleType.ColorModes.Blink,
         Color = Calc.HexToColor("ff350f"),
         Color2 = Calc.HexToColor("c21f11")
     };
-
-    private static int BumperDashes
-    {
-        get => HooliganHelperModule.Session.BumperDashes; 
-        set => HooliganHelperModule.Session.BumperDashes = value;
-    }
-    private static bool DashingWithBumper
-    {
-        get => HooliganHelperModule.Session.DashingWithBumper; 
-        set => HooliganHelperModule.Session.DashingWithBumper = value;
-    }
     
-    private float DelayTime;
-
+    private readonly float DelayTime;
     private static Session.CoreModes CollectedInMode = Session.CoreModes.None;
-    
-    public bool BumperDoesntRefillDash;
-    
+    private readonly bool BumperDoesntRefillDash;
     private Sprite Sprite;
-    
     private Sprite flash;
-
     private Level level;
-    
-    private Image Outline;
-    
-    private Wiggler wiggler;
-
-    private BloomPoint bloom;
-
-    private VertexLight light;
-
-    private SineWave sine;
-
-    public static int state;
-    
-    private bool oneUse;
-    
+    private readonly Image Outline;
+    private readonly Wiggler wiggler;
+    private readonly BloomPoint bloom;
+    private readonly VertexLight light;
+    private readonly SineWave sine;
+    private readonly bool oneUse;
     private float respawnTimer;
-    
-    public static bool ShouldSkipDashRefill = false;
-
-    private bool alwaysHot;
+    public static bool ShouldSkipDashRefill;
+    private readonly bool alwaysHot;
     
     public BumperRefill(EntityData data, Vector2 offset)
         :base(data.Position + offset)
@@ -103,14 +69,14 @@ public class BumperRefill : Entity
         
         alwaysHot = data.Bool("alwaysHot", defaultValue:false);
         
-        base.Collider = new Hitbox(16f, 16f, -8f, -8f);
+        Collider = new Hitbox(16f, 16f, -8f, -8f);
         Add(new PlayerCollider(OnPlayer));
         
         Add(Outline = new Image(GFX.Game["objects/HooliganHelper/BumperRefill/outline"]));
         Outline.CenterOrigin();
         Outline.Visible = false;
         
-        Add(wiggler = Wiggler.Create(1f, 4f, (float v) =>
+        Add(wiggler = Wiggler.Create(1f, 4f, (v) =>
         {
             Sprite.Scale = (Sprite.Scale = Vector2.One * (1f + v * 0.2f));
         }));
@@ -120,7 +86,7 @@ public class BumperRefill : Entity
         Add(light = new VertexLight(Color.White, 1f, 16, 48));
         Add(sine = new SineWave(0.6f, 0f));
         sine.Randomize();
-        base.Depth = -100;
+        Depth = -100;
         
         Add(new CoreModeListener(OnChangeMode));
     }
@@ -128,9 +94,7 @@ public class BumperRefill : Entity
     public override void Awake(Scene scene)
     {
         base.Awake(scene);
-        
-        if(scene is not Level level)
-            return;
+        if (level is null) return;
         
         Add(Sprite = new Sprite(GFX.Game,"objects/HooliganHelper/BumperRefill/"));
         Sprite.AddLoop("idle", "idle", 0.1f);
@@ -186,7 +150,7 @@ public class BumperRefill : Entity
     
     private void OnPlayer(Player player)
     {
-        if (player.Dashes < 1 || BumperDashes < 1)
+        if (player.Dashes < 1 || HooliganHelperModule.Session.BumperDashes < 1)
         {
             Audio.Play("event:/new_content/game/10_farewell/pinkdiamond_touch", Position);
             Audio.Play("event:/game/06_reflection/pinballbumper_reset", Position);
@@ -198,8 +162,6 @@ public class BumperRefill : Entity
             HooliganHelperModule.Session.LastBumperCollected = this;
         }
     }
-
-    
     
     public IEnumerator BumperRefillLaunch(Player player)
     {
@@ -231,8 +193,7 @@ public class BumperRefill : Entity
     public override void Update()
     {
         base.Update();
-        
-        if (Scene is not Level level) return;
+        if (level is null) return;
 
         if (respawnTimer > 0f)
         {
@@ -242,7 +203,7 @@ public class BumperRefill : Entity
                 Respawn();
             }
         }
-        else if (base.Scene.OnInterval(0.1f))
+        else if (Scene.OnInterval(0.1f))
         {
             level.ParticlesFG.Emit(((level.CoreMode == Session.CoreModes.Hot) || alwaysHot) ? P_EvilBumperGlow : P_BumperGlow, 1, Position, Vector2.One * 5f);
             
@@ -250,7 +211,7 @@ public class BumperRefill : Entity
         UpdateY();
         light.Alpha = Calc.Approach(light.Alpha, Sprite.Visible ? 1f : 0f, 4f * Engine.DeltaTime);
         bloom.Alpha = light.Alpha * 0.8f;
-        if (base.Scene.OnInterval(2f) && Sprite.Visible)
+        if (Scene.OnInterval(2f) && Sprite.Visible)
         {
             if ((level.coreMode is Session.CoreModes.Cold  or Session.CoreModes.None) && !alwaysHot)
             {
@@ -263,19 +224,20 @@ public class BumperRefill : Entity
             flash.Visible = true;
         }
     }
+    
     private IEnumerator RefillRoutine(Player player)
     {
         CollectedInMode = level.CoreMode;
         Logger.Info($"teehee",$"{level.CoreMode}");
-        BumperDashes++;
-        global::Celeste.Celeste.Freeze(0.05f);
+        HooliganHelperModule.Session.BumperDashes++;
+        Celeste.Freeze(0.05f);
         yield return null;
         level.Shake();
         Sprite.Visible = false;
         Outline.Visible = true;
-        if (!oneUse)
+        if (oneUse)
         {
-            Outline.Visible = true;
+            Outline.Visible = false;
         }
         Depth = 8999;
         yield return 0.05f;
@@ -296,12 +258,13 @@ public class BumperRefill : Entity
             Collidable = true;
             Sprite.Visible = true;
             Outline.Visible = false;
-            base.Depth = -100;
+            Depth = -100;
             wiggler.Start();
             Audio.Play("event:/new_content/game/10_farewell/pinkdiamond_return", Position);
             level.ParticlesFG.Emit(((level.CoreMode == Session.CoreModes.Hot) || alwaysHot) ? P_EvilBumperRegen : P_BumperRegen, 16, Position, Vector2.One * 2f);
         }
     }
+    
     public override void Render()
     {
         if (Sprite.Visible)
@@ -310,5 +273,4 @@ public class BumperRefill : Entity
         }
         base.Render();
     }
-
 }

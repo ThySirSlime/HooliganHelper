@@ -1,23 +1,16 @@
-﻿using System;
-using System.Collections;
-using Celeste.Mod.Entities;
-using Microsoft.Xna.Framework;
-using Monocle;
-
-namespace Celeste.Mod.HooliganHelper.Entities;
-
+﻿namespace Celeste.Mod.HooliganHelper.Entities;
+[CustomEntity("HooliganHelper/DaisyRefill")]
 [Tracked]
 
-[CustomEntity("HooliganHelper/DaisyRefill")]
 public class DaisyRefill : Entity
 {
-    public static ParticleType P_BumperShatter = new ParticleType(Refill.P_Shatter)
+    private static readonly ParticleType P_BumperShatter = new ParticleType(Refill.P_Shatter)
     {
         Color = Calc.HexToColor("ffffff"),
         Color2 = Calc.HexToColor("dddddd"),
     };
 
-    public static ParticleType P_BumperRegen = new ParticleType(Refill.P_Regen)
+    private static readonly ParticleType P_BumperRegen = new ParticleType(Refill.P_Regen)
     {
         SpeedMin = 40f,
         SpeedMax = 60f,
@@ -25,73 +18,47 @@ public class DaisyRefill : Entity
         Color = Calc.HexToColor("355428"),
         Color2 = Calc.HexToColor("3d602f")
     };
-    
-    public static ParticleType P_BumperGlow = new ParticleType(Refill.P_Glow)
+
+    private static readonly ParticleType P_BumperGlow = new ParticleType(Refill.P_Glow)
     {
         ColorMode = ParticleType.ColorModes.Fade,
         Color = Calc.HexToColor("f1ce8d"),
         Color2 = Calc.HexToColor("d89f48")
     };
     
-    private Image Sprite;
-    
+    private readonly Image Sprite;
     private Level level;
-    
-    private Image Outline;
-
-    public static Vector2 PlayerDelayed;
-    
-    private Wiggler wiggler;
-
-    private BloomPoint bloom;
-
-    private VertexLight light;
-
-    private SineWave sine;
-    
-    private bool oneUse;
-    
+    private readonly Image Outline;
+    private static Vector2 PlayerDelayed;
+    private readonly Wiggler wiggler;
+    private readonly BloomPoint bloom;
+    private readonly VertexLight light;
+    private readonly SineWave sine;
+    private readonly bool oneUse;
     private float respawnTimer;
-
-    public string refillSprite;
-    
-    public string outlineSprite;
-
-    public string spinnerSprite;
-
-    public static DaisyRefill lastUsedDaisyRefill;
-
-    private static int DaisyDashes
-    {
-        get => HooliganHelperModule.Session.DaisyDashes; 
-        set => HooliganHelperModule.Session.DaisyDashes = value;
-    }
-    private static bool DashingWithDaisy
-    {
-        get => HooliganHelperModule.Session.DashingWithDaisy; 
-        set => HooliganHelperModule.Session.DashingWithDaisy = value;
-    }
+    private readonly string spinnerSprite;
+    private static DaisyRefill lastUsedDaisyRefill;
     
     public DaisyRefill(EntityData data, Vector2 offset)
         :base(data.Position + offset)
     {
-        base.Collider = new Hitbox(16f, 16f, -8f, -8f);
+        Collider = new Hitbox(16f, 16f, -8f, -8f);
         Add(new PlayerCollider(OnPlayer));
 
         oneUse = data.Bool("oneUse", defaultValue:false);
         
-        refillSprite = data.String("refillSprite", defaultValue:"objects/HooliganHelper/DaisyRefill/daisyrefill");
-        outlineSprite = data.String("outlineSprite", defaultValue:"objects/HooliganHelper/DaisyRefill/outline");
+        string refillSprite1 = data.String("refillSprite", defaultValue:"objects/HooliganHelper/DaisyRefill/daisyrefill");
+        string outlineSprite1 = data.String("outlineSprite", defaultValue:"objects/HooliganHelper/DaisyRefill/outline");
         spinnerSprite = data.String("spinnerSprite", defaultValue:"objects/HooliganHelper/DaisyRefill/daisyspinner");
         
-        Add(Outline = new Image(GFX.Game[outlineSprite]));
+        Add(Outline = new Image(GFX.Game[outlineSprite1]));
         Outline.CenterOrigin();
         Outline.Visible = false;
         
-        Add(Sprite = new Image(GFX.Game[refillSprite]));
+        Add(Sprite = new Image(GFX.Game[refillSprite1]));
         Sprite.CenterOrigin();
         
-        Add(wiggler = Wiggler.Create(1f, 4f, (float v) =>
+        Add(wiggler = Wiggler.Create(1f, 4f, (v) =>
         {
            Sprite.Scale = (Sprite.Scale = Vector2.One * (1f + v * 0.2f));
         }));
@@ -101,7 +68,7 @@ public class DaisyRefill : Entity
         Add(sine = new SineWave(0.6f, 0f));
         sine.Randomize();
         UpdateY();
-        base.Depth = -100;
+        Depth = -100;
     }
 
     private void UpdateY()
@@ -117,9 +84,10 @@ public class DaisyRefill : Entity
         base.Added(scene);
         level = scene as Level;
     }
+    
     private void OnPlayer(Player player)
     {
-        if (player.Dashes < 1 || DaisyDashes < 1)
+        if (player.Dashes < 1 || HooliganHelperModule.Session.DaisyDashes < 1)
         {
             Audio.Play("event:/new_content/game/10_farewell/pinkdiamond_touch", Position);
             Audio.Play("event:/char/madeline/footstep", Position, "surface_index", 33);
@@ -156,7 +124,7 @@ public class DaisyRefill : Entity
                 Respawn();
             }
         }
-        else if (base.Scene.OnInterval(0.1f))
+        else if (Scene.OnInterval(0.1f))
         {
             level.ParticlesFG.Emit(P_BumperGlow, 1, Position, Vector2.One * 5f);
         }
@@ -164,18 +132,19 @@ public class DaisyRefill : Entity
         light.Alpha = Calc.Approach(light.Alpha, Sprite.Visible ? 1f : 0f, 4f * Engine.DeltaTime);
         bloom.Alpha = light.Alpha * 0.3f;
     }
+    
     private IEnumerator RefillRoutine(Player player)
     {
-        DaisyDashes++;
+        HooliganHelperModule.Session.DaisyDashes++;
         lastUsedDaisyRefill = this;
-        global::Celeste.Celeste.Freeze(0.05f);
+        Celeste.Freeze(0.05f);
         yield return null;
         level.Shake();
         Sprite.Visible = false;
         Outline.Visible = true;
-        if (!oneUse)
+        if (oneUse)
         {
-            Outline.Visible = true;
+            Outline.Visible = false;
         }
         Depth = 8999;
         yield return 0.05f;
@@ -196,13 +165,14 @@ public class DaisyRefill : Entity
             Collidable = true;
             Sprite.Visible = true;
             Outline.Visible = false;
-            base.Depth = -100;
+            Depth = -100;
             wiggler.Start();
             Audio.Play("event:/new_content/game/10_farewell/pinkdiamond_return", Position);
             Audio.Play("event:/char/madeline/footstep", Position, "surface_index", 33);
             level.ParticlesFG.Emit(P_BumperRegen, 16, Position, Vector2.One * 2f);
         }
     }
+    
     public override void Render()
     {
         if (Sprite.Visible)
@@ -211,5 +181,4 @@ public class DaisyRefill : Entity
         }
         base.Render();
     }
-
 }

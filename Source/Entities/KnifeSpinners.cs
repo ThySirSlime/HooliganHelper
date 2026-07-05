@@ -1,28 +1,20 @@
-﻿using System;
-using System.Collections;
-using Celeste.Mod.Entities;
-using Microsoft.Xna.Framework;
-using Monocle;
-
-namespace Celeste.Mod.HooliganHelper.Entities;
+﻿namespace Celeste.Mod.HooliganHelper.Entities;
 
 public class KnifeSpinners : Entity
 {
-    private Image Outline;
-    
-    
     public KnifeSpinners(Vector2 offset, string spinnerSprite) 
         : base(offset)
     {
-        Add(Outline = new Image(GFX.Game[spinnerSprite]));
-        Outline.Rotation = Calc.Random.Next(4) * Single.Pi / 2;
-        Outline.CenterOrigin();
+        Image outline;
+        Add(outline = new Image(GFX.Game[spinnerSprite]));
+        outline.Rotation = Calc.Random.Next(4) * Single.Pi / 2;
+        outline.CenterOrigin();
     }
 
     private IEnumerator AddHitbox()
     {
         yield return null;
-        base.Collider = new ColliderList(new Circle(6f), new Hitbox(16f, 4f, -8f, -3f));
+        Collider = new ColliderList(new Circle(6f), new Hitbox(16f, 4f, -8f, -3f));
         Add(new PlayerCollider(OnPlayer));
     }
 
@@ -36,5 +28,4 @@ public class KnifeSpinners : Entity
     {
         player.Die((player.Position - Position).SafeNormalize());
     }
-    
 }
