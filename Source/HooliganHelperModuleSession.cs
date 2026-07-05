@@ -13,4 +13,6 @@ public class HooliganHelperModuleSession : EverestModuleSession
     public bool DashingWithMetamorphosis;
     public int DaisyDashes;
     public bool DashingWithDaisy;
+    public int KnifeDashes;
+    public bool DashingWithKnife;
 }

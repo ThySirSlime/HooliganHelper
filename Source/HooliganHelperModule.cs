@@ -45,6 +45,7 @@ public class HooliganHelperModule : EverestModule {
         Session.MetamorphosisDashes = 0;
         Session.BumperDashes = 0;
         Session.DaisyDashes = 0;
+        Session.KnifeDashes = 0;
         Session.BoughDashes = 0;
         orig(self,scene);
     }
@@ -55,6 +56,7 @@ public class HooliganHelperModule : EverestModule {
         Session.MetamorphosisDashes = 0;
         Session.BumperDashes = 0;
         Session.DaisyDashes = 0;
+        Session.KnifeDashes = 0;
     }
 
     private static void PlayerOnExplodeLaunch_Vector2_bool_bool(ILContext il)
@@ -74,6 +76,7 @@ public class HooliganHelperModule : EverestModule {
         Session.BumperDashes = 0;
         Session.DaisyDashes = 0;
         Session.BoughDashes = 0;
+        Session.KnifeDashes = 0;
         return orig(self, direction, evenIfInvincible, registerDeathInStats);
     }
 
@@ -94,6 +97,12 @@ public class HooliganHelperModule : EverestModule {
         {
             self.Add(new Coroutine(DaisyRefill.DaisySpinnerPlacement(self)));
             Session.DaisyDashes --;
+        }
+        
+        if (Session.KnifeDashes > 0)
+        {
+            self.Add(new Coroutine(KnifeRefill.KnifeSpinnerPlacement(self)));
+            Session.KnifeDashes --;
         }
         
         if (Session.BoughDashes > 0)
