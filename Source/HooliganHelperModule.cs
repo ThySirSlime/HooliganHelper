@@ -38,6 +38,7 @@ public class HooliganHelperModule : EverestModule {
         On.Celeste.Level.End += LevelOnEnd;
         On.Celeste.Player.Added += PlayerRespawns;
         IL.Celeste.Player.ExplodeLaunch_Vector2_bool_bool += PlayerOnExplodeLaunch_Vector2_bool_bool;
+        LifecycleMethods.OnLoad();
     }
 
     private static void PlayerRespawns(On.Celeste.Player.orig_Added orig, Player self, Scene scene)
@@ -153,5 +154,6 @@ public class HooliganHelperModule : EverestModule {
         On.Celeste.Level.End -= LevelOnEnd;
         On.Celeste.Player.Added -= PlayerRespawns;
         IL.Celeste.Player.ExplodeLaunch_Vector2_bool_bool -= PlayerOnExplodeLaunch_Vector2_bool_bool;
+        LifecycleMethods.OnUnload();
     }
 }
